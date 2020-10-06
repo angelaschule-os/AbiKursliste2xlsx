@@ -2,6 +2,12 @@
 
 Projekt um die aus Indiware exportierten Kurslisten nach Excel umzuwandeln.
 
+## Projekt für Windows bauen
+
+```shell
+GOOS=windows GOARCH=amd64 go build
+```
+
 ## Umwandlung ausführen
 
 ```shell
