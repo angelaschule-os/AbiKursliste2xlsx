@@ -2,8 +2,15 @@
 
 Projekt um die aus Indiware exportierten Kurslisten nach Excel umzuwandeln.
 
+## Umwandlung ausführen
 
-## Umwandlung mit pdftotext
+```shell
+./AbiKursliste2ods AbiKursliste.pdf
+```
+
+## sonstiges
+
+### Umwandlung mit pdftotext nach text
 
 ```shell
 pdftotext -layout -nopgbrk AbiKursliste.pdf
