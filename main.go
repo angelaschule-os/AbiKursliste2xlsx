@@ -37,6 +37,8 @@ func readPdf(path string) (string, error) {
 		// Create a new sheet.
 		sheet := "Sheet" + fmt.Sprintf("%d", pageIndex)
 		x.NewSheet(sheet)
+		x.SetColWidth(sheet, "B", "B", 30)
+		x.SetColWidth(sheet, "G", "G", 30)
 
 		rows, _ := p.GetTextByRow()
 		//fmt.Printf("%v", rows)
