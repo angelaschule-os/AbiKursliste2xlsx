@@ -14,7 +14,6 @@ func main() {
 		panic(err)
 	}
 	fmt.Println(content)
-	return
 }
 
 func readPdf(path string) (string, error) {
