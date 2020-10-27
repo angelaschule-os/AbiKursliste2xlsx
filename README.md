@@ -4,7 +4,7 @@ Projekt um die aus Indiware exportierten Kurslisten nach Excel umzuwandeln.
 
 - [AbiKursliste2xlsx](#abikursliste2xlsx)
   - [Projekt für Windows bauen](#projekt-für-windows-bauen)
-  - [Kommandozeileargument](#kommandozeileargument)
+  - [Kommandozeilenargumente](#kommandozeilenargumente)
   - [Umwandlung ausführen](#umwandlung-ausführen)
     - [Erstellung einer XLSX Datei mit mehreren Blättern](#erstellung-einer-xlsx-datei-mit-mehreren-blättern)
     - [Erstellung mehrerer XLSX Dateien](#erstellung-mehrerer-xlsx-dateien)
@@ -17,7 +17,7 @@ Projekt um die aus Indiware exportierten Kurslisten nach Excel umzuwandeln.
 GOOS=windows GOARCH=amd64 go build
 ```
 
-## Kommandozeileargument
+## Kommandozeilenargumente
 
 ```shell
 -files
