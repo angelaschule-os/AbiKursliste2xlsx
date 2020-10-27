@@ -97,10 +97,12 @@ func readPdf(path string) (string, error) {
 					//}
 					// Set value of a cell.
 					if i > 27 && i%4 != 0 && i%2 == 0 {
-						x.SetCellValue(sheet, "A"+fmt.Sprintf("%d", 12+j), j)
-						x.SetCellValue(sheet, "B"+fmt.Sprintf("%d", 12+j), word.S)
-						fmt.Println(word.S)
-						j++
+						if word.S != "---" {
+							x.SetCellValue(sheet, "A"+fmt.Sprintf("%d", 12+j), j)
+							x.SetCellValue(sheet, "B"+fmt.Sprintf("%d", 12+j), word.S)
+							fmt.Println(word.S)
+							j++
+						}
 					}
 				}
 			}
