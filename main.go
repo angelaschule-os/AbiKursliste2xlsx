@@ -57,6 +57,8 @@ func readPdf(path string) (string, error) {
 				x.SetCellValue(sheet, "F1", row.Content[25].S)
 				// Bemerkungen
 				x.SetCellValue(sheet, "G1", row.Content[27].S)
+				// Anzahl Fehltage
+				x.SetCellValue(sheet, "H1", "Fehltage")
 
 				var i = 0
 				var j = 1
