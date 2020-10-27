@@ -27,7 +27,10 @@ func readPdf(path string) (string, error) {
 	totalPage := r.NumPage()
 
 	x := excelize.NewFile()
-
+	//style, _ := x.NewStyle(`{"number_format": 1}`)
+	styleHeader, _ := x.NewStyle(`{"fill":{"type":"pattern","color":["#FFFFFF"],"pattern":1}}`)
+	styleHeaderBold, _ := x.NewStyle(`{"font":{"bold":true,"size":13},"fill":{"type":"pattern","color":["#FFFFFF"],"pattern":1}}`)
+	styleBold, _ := x.NewStyle(`{"font":{"bold":true}}`)
 	for pageIndex := 1; pageIndex <= totalPage; pageIndex++ {
 		p := r.Page(pageIndex)
 		if p.V.IsNull() {
@@ -45,20 +48,44 @@ func readPdf(path string) (string, error) {
 				x.NewSheet(sheet)
 				x.SetColWidth(sheet, "B", "B", 30)
 				x.SetColWidth(sheet, "G", "G", 30)
+
+				// Header begin
+				x.SetCellStyle(sheet, "A1", "H11", styleHeader)
+				// Kursliste
+				x.SetCellValue(sheet, "A2", row.Content[1].S)
+				x.SetCellStyle(sheet, "A2", "A2", styleHeaderBold)
+				// Kurs
+				x.SetCellValue(sheet, "C2", row.Content[9].S)
+				x.SetCellStyle(sheet, "C2", "C2", styleHeaderBold)
+				// Angelaschule Osnabrück
+				x.SetCellValue(sheet, "A4", row.Content[3].S)
+				// Abiturjahrgang
+				x.SetCellValue(sheet, "A6", row.Content[5].S)
+				// Kursleiter
+				x.SetCellValue(sheet, "A8", row.Content[11].S)
+				x.SetCellStyle(sheet, "A8", "A8", styleHeaderBold)
+				//Leiter
+				x.SetCellValue(sheet, "C8", row.Content[13].S)
+				x.SetCellStyle(sheet, "C8", "C8", styleHeaderBold)
+				// Zwischenstände
+				x.SetCellValue(sheet, "A10", row.Content[15].S)
+				// Header end
+
+				x.SetCellStyle(sheet, "B12", "H12", styleBold)
 				// Name
-				x.SetCellValue(sheet, "B1", row.Content[17].S)
+				x.SetCellValue(sheet, "B12", row.Content[17].S)
 				// Hj. 1
-				x.SetCellValue(sheet, "C1", row.Content[19].S)
+				x.SetCellValue(sheet, "C12", row.Content[19].S)
 				// Hj. 2
-				x.SetCellValue(sheet, "D1", row.Content[21].S)
+				x.SetCellValue(sheet, "D12", row.Content[21].S)
 				// Hj. 3
-				x.SetCellValue(sheet, "E1", row.Content[23].S)
+				x.SetCellValue(sheet, "E12", row.Content[23].S)
 				// Hj. 4
-				x.SetCellValue(sheet, "F1", row.Content[25].S)
+				x.SetCellValue(sheet, "F12", row.Content[25].S)
 				// Bemerkungen
-				x.SetCellValue(sheet, "G1", row.Content[27].S)
+				x.SetCellValue(sheet, "G12", row.Content[27].S)
 				// Anzahl Fehltage
-				x.SetCellValue(sheet, "H1", "Fehltage")
+				x.SetCellValue(sheet, "H12", "Fehltage")
 
 				var i = 0
 				var j = 1
@@ -70,8 +97,8 @@ func readPdf(path string) (string, error) {
 					//}
 					// Set value of a cell.
 					if i > 27 && i%4 != 0 && i%2 == 0 {
-						x.SetCellValue(sheet, "A"+fmt.Sprintf("%d", 1+j), j)
-						x.SetCellValue(sheet, "B"+fmt.Sprintf("%d", 1+j), word.S)
+						x.SetCellValue(sheet, "A"+fmt.Sprintf("%d", 12+j), j)
+						x.SetCellValue(sheet, "B"+fmt.Sprintf("%d", 12+j), word.S)
 						fmt.Println(word.S)
 						j++
 					}
