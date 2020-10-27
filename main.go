@@ -36,8 +36,6 @@ func main() {
 		multipleSheets = false
 	}
 
-	fmt.Println(pdfPath)
-
 	if _, err := readPdf(pdfPath); err != nil {
 		fmt.Println(err)
 	}
