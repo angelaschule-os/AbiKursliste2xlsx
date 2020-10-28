@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -34,6 +35,15 @@ func main() {
 
 	if multipleFiles {
 		multipleSheets = false
+
+		if err := os.Mkdir("eA", 0755); err != nil {
+			log.Fatal(err)
+		}
+
+		if err := os.Mkdir("gA", 0755); err != nil {
+			log.Fatal(err)
+		}
+
 	}
 
 	if _, err := readPdf(pdfPath); err != nil {
@@ -143,8 +153,19 @@ func readPdf(path string) (string, error) {
 			// Set active sheet of the workbook.
 			x.SetActiveSheet(2)
 			// Save xlsx file by the given path.
-			if err := x.SaveAs(filename + ".xlsx"); err != nil {
-				fmt.Println(err)
+
+			if strings.ToUpper(filename) == filename {
+
+				if err := x.SaveAs("eA/" + filename + ".xlsx"); err != nil {
+					fmt.Println(err)
+				}
+
+			} else {
+
+				if err := x.SaveAs("gA/" + filename + ".xlsx"); err != nil {
+					fmt.Println(err)
+				}
+
 			}
 
 		}
