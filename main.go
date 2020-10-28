@@ -73,7 +73,7 @@ func readPdf(path string) (string, error) {
 				// Set value of a cell.
 				// Create a new sheet with name of "kurs"
 				sheet := row.Content[9].S
-				filename = sheet[0:3]
+				filename = sheet[:strings.IndexByte(sheet, ' ')]
 				x.NewSheet(sheet)
 				x.SetColWidth(sheet, "B", "B", 30)
 				x.SetColWidth(sheet, "G", "G", 30)
