@@ -47,7 +47,7 @@ func main() {
 	}
 
 	if _, err := readPdf(pdfPath); err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 }
 
@@ -157,13 +157,13 @@ func readPdf(path string) (string, error) {
 			if strings.ToUpper(filename) == filename {
 
 				if err := x.SaveAs("eA/" + filename + ".xlsx"); err != nil {
-					fmt.Println(err)
+					log.Fatal(err)
 				}
 
 			} else {
 
 				if err := x.SaveAs("gA/" + filename + ".xlsx"); err != nil {
-					fmt.Println(err)
+					log.Fatal(err)
 				}
 
 			}
@@ -181,7 +181,7 @@ func readPdf(path string) (string, error) {
 		x.SetActiveSheet(2)
 		// Save xlsx file by the given path.
 		if err := x.SaveAs(filename + ".xlsx"); err != nil {
-			fmt.Println(err)
+			log.Fatal(err)
 		}
 
 	}
