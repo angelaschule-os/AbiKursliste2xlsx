@@ -82,8 +82,9 @@ func readPdf(path string) (string, error) {
 			if row.Content.Len() > 27 {
 				// Set value of a cell.
 				// Create a new sheet with name of "kurs"
-				sheet := row.Content[9].S
-				filename = sheet[:strings.IndexByte(sheet, ' ')]
+				course := row.Content[9].S
+				sheet := course[:strings.IndexByte(course, ' ')]
+				filename = course[:strings.IndexByte(course, ' ')]
 				x.NewSheet(sheet)
 				x.SetColWidth(sheet, "B", "B", 30)
 				x.SetColWidth(sheet, "G", "G", 30)
@@ -159,7 +160,6 @@ func readPdf(path string) (string, error) {
 				if err := x.SaveAs("eA/" + filename + ".xlsx"); err != nil {
 					log.Fatal(err)
 				}
-
 			} else {
 
 				if err := x.SaveAs("gA/" + filename + ".xlsx"); err != nil {
