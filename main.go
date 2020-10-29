@@ -1,52 +1,26 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/dcu/pdf"
 )
 
-// global vars
-var pdfPath string
-var multipleSheets bool
-var multipleFiles bool
-
 func main() {
 
-	// define flags
-
-	flag.StringVar(&pdfPath, "pdf", "", "Path to an PDF file.")
-	flag.BoolVar(&multipleFiles, "files", false, "Generate multiple XLSX files.")
-	flag.BoolVar(&multipleSheets, "sheets", true, "Generate an XLSX file with multiple sheets.")
-
-	//parse
-	flag.Parse()
-
-	if len(os.Args) <= 1 {
-		flag.PrintDefaults()
-		return
+	if err := os.Mkdir("eA", 0755); err != nil {
+		log.Fatal(err)
 	}
 
-	if multipleFiles {
-		multipleSheets = false
-
-		if err := os.Mkdir("eA", 0755); err != nil {
-			log.Fatal(err)
-		}
-
-		if err := os.Mkdir("gA", 0755); err != nil {
-			log.Fatal(err)
-		}
-
+	if err := os.Mkdir("gA", 0755); err != nil {
+		log.Fatal(err)
 	}
 
-	if _, err := readPdf(pdfPath); err != nil {
+	if _, err := readPdf(os.Args[1]); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -61,13 +35,6 @@ func readPdf(path string) (string, error) {
 	}
 	totalPage := r.NumPage()
 
-	x := excelize.NewFile()
-
-	//style, _ := x.NewStyle(`{"number_format": 1}`)
-	styleHeader, _ := x.NewStyle(`{"fill":{"type":"pattern","color":["#FFFFFF"],"pattern":1}}`)
-	styleHeaderBold, _ := x.NewStyle(`{"font":{"bold":true,"size":13},"fill":{"type":"pattern","color":["#FFFFFF"],"pattern":1}}`)
-	styleBold, _ := x.NewStyle(`{"font":{"bold":true}}`)
-
 	for pageIndex := 1; pageIndex <= totalPage; pageIndex++ {
 		p := r.Page(pageIndex)
 		if p.V.IsNull() {
@@ -76,6 +43,12 @@ func readPdf(path string) (string, error) {
 
 		rows, _ := p.GetTextByRow()
 		var filename string
+		x := excelize.NewFile()
+
+		//style, _ := x.NewStyle(`{"number_format": 1}`)
+		styleHeader, _ := x.NewStyle(`{"fill":{"type":"pattern","color":["#FFFFFF"],"pattern":1}}`)
+		styleHeaderBold, _ := x.NewStyle(`{"font":{"bold":true,"size":13},"fill":{"type":"pattern","color":["#FFFFFF"],"pattern":1}}`)
+		styleBold, _ := x.NewStyle(`{"font":{"bold":true}}`)
 		//fmt.Printf("%v", rows)
 		for _, row := range rows {
 			//println(">>>> row: ", row.Position)
@@ -148,40 +121,23 @@ func readPdf(path string) (string, error) {
 			}
 		}
 
-		if multipleFiles {
-			// Delete standard sheet
-			x.DeleteSheet("Sheet1")
-			// Set active sheet of the workbook.
-			x.SetActiveSheet(2)
-			// Save xlsx file by the given path.
-
-			if strings.ToUpper(filename) == filename {
-
-				if err := x.SaveAs("eA/" + filename + ".xlsx"); err != nil {
-					log.Fatal(err)
-				}
-			} else {
-
-				if err := x.SaveAs("gA/" + filename + ".xlsx"); err != nil {
-					log.Fatal(err)
-				}
-
-			}
-
-		}
-	}
-
-	if multipleSheets {
-
-		base := filepath.Base(pdfPath)
-		filename := strings.TrimSuffix(base, filepath.Ext(base))
 		// Delete standard sheet
 		x.DeleteSheet("Sheet1")
 		// Set active sheet of the workbook.
 		x.SetActiveSheet(2)
 		// Save xlsx file by the given path.
-		if err := x.SaveAs(filename + ".xlsx"); err != nil {
-			log.Fatal(err)
+
+		if strings.ToUpper(filename) == filename {
+
+			if err := x.SaveAs("eA/" + filename + ".xlsx"); err != nil {
+				log.Fatal(err)
+			}
+		} else {
+
+			if err := x.SaveAs("gA/" + filename + ".xlsx"); err != nil {
+				log.Fatal(err)
+			}
+
 		}
 
 	}
