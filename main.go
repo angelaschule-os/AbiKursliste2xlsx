@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
@@ -13,14 +14,29 @@ import (
 func main() {
 
 	if err := os.Mkdir("eA", 0755); err != nil {
+		// dirty hack for keeping windows console open
+		if runtime.GOOS == "windows" {
+			fmt.Println(err)
+			fmt.Scanf("h")
+		}
 		log.Fatal(err)
 	}
 
 	if err := os.Mkdir("gA", 0755); err != nil {
+		// dirty hack for keeping windows console open
+		if runtime.GOOS == "windows" {
+			fmt.Println(err)
+			fmt.Scanf("h")
+		}
 		log.Fatal(err)
 	}
 
 	if _, err := readPdf(os.Args[1]); err != nil {
+		// dirty hack for keeping windows console open
+		if runtime.GOOS == "windows" {
+			fmt.Println(err)
+			fmt.Scanf("h")
+		}
 		log.Fatal(err)
 	}
 }
