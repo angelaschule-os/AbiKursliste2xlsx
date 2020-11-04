@@ -13,7 +13,25 @@ import (
 
 func main() {
 
+	if err := os.RemoveAll("eA"); err != nil {
+		// dirty hack for keeping windows console open
+		if runtime.GOOS == "windows" {
+			fmt.Println(err)
+			fmt.Scanf("h")
+		}
+		log.Fatal(err)
+	}
+
 	if err := os.Mkdir("eA", 0755); err != nil {
+		// dirty hack for keeping windows console open
+		if runtime.GOOS == "windows" {
+			fmt.Println(err)
+			fmt.Scanf("h")
+		}
+		log.Fatal(err)
+	}
+
+	if err := os.RemoveAll("gA"); err != nil {
 		// dirty hack for keeping windows console open
 		if runtime.GOOS == "windows" {
 			fmt.Println(err)
