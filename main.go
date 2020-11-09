@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
@@ -85,16 +86,25 @@ func readPdf(path string) (string, error) {
 		styleBold, _ := x.NewStyle(`{"font":{"bold":true}}`)
 		//fmt.Printf("%v", rows)
 		for _, row := range rows {
-			//println(">>>> row: ", row.Position)
-			if row.Content.Len() > 27 {
-				// Set value of a cell.
-				// Create a new sheet with name of "kurs"
+
+			kursliste := strings.Contains(row.Content[1].S, "Kursliste")
+
+			if kursliste {
+				termline := row.Content[5].S
+
+				// EP or Q?
+				ep := strings.Contains(termline, "Einführungsphase")
+
+				// Extract the current term
+				// TODO: Better error handling instead of ignoring.
+				hj, _ := strconv.Atoi(termline[21:22])
+
+				// Create a new sheet and filename with name of "kurs"
 				course := row.Content[9].S
 				sheet := course[:strings.IndexByte(course, ' ')]
 				filename = course[:strings.IndexByte(course, ' ')]
+
 				x.NewSheet(sheet)
-				x.SetColWidth(sheet, "B", "B", 30)
-				x.SetColWidth(sheet, "G", "G", 30)
 
 				// Header begin
 				x.SetCellStyle(sheet, "A1", "H11", styleHeader)
@@ -118,37 +128,58 @@ func readPdf(path string) (string, error) {
 				x.SetCellValue(sheet, "A10", row.Content[15].S)
 				// Header end
 
-				x.SetCellStyle(sheet, "B12", "H12", styleBold)
+				x.SetCellStyle(sheet, "A12", "H12", styleBold)
+				// Nr
+				x.SetCellValue(sheet, "A12", "Nr.")
 				// Name
+				x.SetColWidth(sheet, "B", "B", 30)
 				x.SetCellValue(sheet, "B12", row.Content[17].S)
 				// Hj. 1
 				x.SetCellValue(sheet, "C12", row.Content[19].S)
 				// Hj. 2
 				x.SetCellValue(sheet, "D12", row.Content[21].S)
-				// Hj. 3
-				x.SetCellValue(sheet, "E12", row.Content[23].S)
-				// Hj. 4
-				x.SetCellValue(sheet, "F12", row.Content[25].S)
-				// Bemerkungen
-				x.SetCellValue(sheet, "G12", row.Content[27].S)
-				// Anzahl Fehltage
-				x.SetCellValue(sheet, "H12", "Fehltage")
+				if ep {
+					// Bemerkungen
+					x.SetColWidth(sheet, "E", "E", 30)
+					x.SetCellValue(sheet, "E12", row.Content[23].S)
+					// Anzahl Fehltage
+					x.SetCellValue(sheet, "F12", "Fehltage")
+				} else {
+					// Hj. 3
+					x.SetCellValue(sheet, "E12", row.Content[23].S)
+					// Hj. 4
+					x.SetCellValue(sheet, "F12", row.Content[25].S)
+					// Bemerkungen
+					x.SetColWidth(sheet, "G", "G", 30)
+					x.SetCellValue(sheet, "G12", row.Content[27].S)
+					// Anzahl Fehltage
+					x.SetCellValue(sheet, "H12", "Fehltage")
+				}
 
-				var i = 0
-				var j = 1
-				for _, word := range row.Content {
+				var j = 0
+				for i, word := range row.Content {
 					//fmt.Println(word.S)
-					i++
 					//if i < 30 {
 					//	continue
 					//}
 					// Set value of a cell.
-					if i > 27 && i%4 != 0 && i%2 == 0 {
-						if word.S != "---" {
+					// i> 27 if 4. Halbjahre.
+					if i > 24 {
+						if len(word.S) > 5 && !strings.Contains(word.S, "Datum,") && !strings.Contains(word.S, "___") {
+							j++
 							x.SetCellValue(sheet, "A"+fmt.Sprintf("%d", 12+j), j)
 							x.SetCellValue(sheet, "B"+fmt.Sprintf("%d", 12+j), word.S)
 							//fmt.Println(word.S)
-							j++
+							// TODO: Set older notes
+							if hj > 1 {
+								x.SetCellValue(sheet, "C"+fmt.Sprintf("%d", 12+j), row.Content[i+4].S)
+							}
+							if hj > 2 {
+								x.SetCellValue(sheet, "D"+fmt.Sprintf("%d", 12+j), row.Content[i+6].S)
+							}
+							if hj == 4 {
+								x.SetCellValue(sheet, "E"+fmt.Sprintf("%d", 12+j), row.Content[i+8].S)
+							}
 						}
 					}
 				}
