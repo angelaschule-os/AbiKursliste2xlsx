@@ -104,6 +104,15 @@ func readPdf(path string) (string, error) {
 				sheet := course[:strings.IndexByte(course, ' ')]
 				filename = course[:strings.IndexByte(course, ' ')]
 
+				var indexBemerkungen int
+				for i, c := range row.Content {
+					if c.S == "Bemerkungen" {
+						fmt.Println("i", i)
+						indexBemerkungen = i
+						break
+					}
+				}
+
 				x.NewSheet(sheet)
 
 				// Header begin
@@ -141,7 +150,7 @@ func readPdf(path string) (string, error) {
 				if ep {
 					// Bemerkungen
 					x.SetColWidth(sheet, "E", "E", 30)
-					x.SetCellValue(sheet, "E12", row.Content[23].S)
+					x.SetCellValue(sheet, "E12", row.Content[indexBemerkungen].S)
 					// Anzahl Fehltage
 					x.SetCellValue(sheet, "F12", "Fehltage")
 				} else {
@@ -151,7 +160,7 @@ func readPdf(path string) (string, error) {
 					x.SetCellValue(sheet, "F12", row.Content[25].S)
 					// Bemerkungen
 					x.SetColWidth(sheet, "G", "G", 30)
-					x.SetCellValue(sheet, "G12", row.Content[27].S)
+					x.SetCellValue(sheet, "G12", row.Content[indexBemerkungen].S)
 					// Anzahl Fehltage
 					x.SetCellValue(sheet, "H12", "Fehltage")
 				}
