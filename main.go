@@ -164,6 +164,7 @@ func readPdf(path string) (string, error) {
 					//}
 					// Set value of a cell.
 					// i> 27 if 4. Halbjahre.
+					// TODO: Adjust offset for 1 and 4 Halbjahre.
 					if i > 24 {
 						if len(word.S) > 5 && !strings.Contains(word.S, "Datum,") && !strings.Contains(word.S, "___") {
 							j++
