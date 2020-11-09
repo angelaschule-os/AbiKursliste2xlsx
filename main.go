@@ -159,19 +159,16 @@ func readPdf(path string) (string, error) {
 				var j = 0
 				for i, word := range row.Content {
 					//fmt.Println(word.S)
-					//if i < 30 {
-					//	continue
-					//}
-					// Set value of a cell.
-					// i> 27 if 4. Halbjahre.
-					// TODO: Adjust offset for 1 and 4 Halbjahre.
-					if i > 24 {
-						if len(word.S) > 5 && !strings.Contains(word.S, "Datum,") && !strings.Contains(word.S, "___") {
+					// Different offset for EP vs. Q
+					if (ep && (i > 24)) || (!ep && (i > 27)) {
+						if len(word.S) > 5 {
 							j++
+							// Set current number
 							x.SetCellValue(sheet, "A"+fmt.Sprintf("%d", 12+j), j)
+							// Set Name
 							x.SetCellValue(sheet, "B"+fmt.Sprintf("%d", 12+j), word.S)
 							//fmt.Println(word.S)
-							// TODO: Set older notes
+							// Set older notes
 							if hj > 1 {
 								x.SetCellValue(sheet, "C"+fmt.Sprintf("%d", 12+j), row.Content[i+4].S)
 							}
