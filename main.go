@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
@@ -85,26 +86,25 @@ func readPdf(path string) (string, error) {
 		styleBold, _ := x.NewStyle(`{"font":{"bold":true}}`)
 		//fmt.Printf("%v", rows)
 		for _, row := range rows {
-			//println(">>>> row: ", row.Position)
-			if row.Content.Len() > 27 {
+
+			kursliste := strings.Contains(row.Content[1].S, "Kursliste")
+
+			if kursliste {
 				termline := row.Content[5].S
+
 				// EP or Q?
 				ep := strings.Contains(termline, "Einführungsphase")
-				// compute the current term
-				hj := row.Content[5].S[strings.Index(termline, ". Halbjahr")-1] - 48
-				// fmt.Printf("%d", hj)
-				// Set value of a cell.
-				// Create a new sheet with name of "kurs"
+
+				// Extract the current term
+				// TODO: Better error handling instead of ignoring.
+				hj, _ := strconv.Atoi(termline[21:22])
+
+				// Create a new sheet and filename with name of "kurs"
 				course := row.Content[9].S
 				sheet := course[:strings.IndexByte(course, ' ')]
 				filename = course[:strings.IndexByte(course, ' ')]
+
 				x.NewSheet(sheet)
-				x.SetColWidth(sheet, "B", "B", 30)
-				if ep {
-					x.SetColWidth(sheet, "E", "E", 30)
-				} else {
-					x.SetColWidth(sheet, "G", "G", 30)
-				}
 
 				// Header begin
 				x.SetCellStyle(sheet, "A1", "H11", styleHeader)
@@ -132,6 +132,7 @@ func readPdf(path string) (string, error) {
 				// Nr
 				x.SetCellValue(sheet, "A12", "Nr.")
 				// Name
+				x.SetColWidth(sheet, "B", "B", 30)
 				x.SetCellValue(sheet, "B12", row.Content[17].S)
 				// Hj. 1
 				x.SetCellValue(sheet, "C12", row.Content[19].S)
@@ -139,6 +140,7 @@ func readPdf(path string) (string, error) {
 				x.SetCellValue(sheet, "D12", row.Content[21].S)
 				if ep {
 					// Bemerkungen
+					x.SetColWidth(sheet, "E", "E", 30)
 					x.SetCellValue(sheet, "E12", row.Content[23].S)
 					// Anzahl Fehltage
 					x.SetCellValue(sheet, "F12", "Fehltage")
@@ -148,6 +150,7 @@ func readPdf(path string) (string, error) {
 					// Hj. 4
 					x.SetCellValue(sheet, "F12", row.Content[25].S)
 					// Bemerkungen
+					x.SetColWidth(sheet, "G", "G", 30)
 					x.SetCellValue(sheet, "G12", row.Content[27].S)
 					// Anzahl Fehltage
 					x.SetCellValue(sheet, "H12", "Fehltage")
@@ -160,13 +163,14 @@ func readPdf(path string) (string, error) {
 					//	continue
 					//}
 					// Set value of a cell.
-					if i > 27 {
+					// i> 27 if 4. Halbjahre.
+					if i > 24 {
 						if len(word.S) > 5 && !strings.Contains(word.S, "Datum,") && !strings.Contains(word.S, "___") {
 							j++
 							x.SetCellValue(sheet, "A"+fmt.Sprintf("%d", 12+j), j)
 							x.SetCellValue(sheet, "B"+fmt.Sprintf("%d", 12+j), word.S)
 							//fmt.Println(word.S)
-							// Set older notes
+							// TODO: Set older notes
 							if hj > 1 {
 								x.SetCellValue(sheet, "C"+fmt.Sprintf("%d", 12+j), row.Content[i+4].S)
 							}
